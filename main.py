@@ -44,15 +44,16 @@ def callback_data(call):
     btn2 = types.InlineKeyboardButton('За конкретную дату', callback_data='date')
     markup.row(btn1, btn2)
     bot.send_message(call.message.chat.id, 'Курс на текущий момент или за конкретную дату?', reply_markup=markup)
-    rate = response.json()['rates']['RUB']
-    bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
-    # @bot.callback_query_handler(func=lambda callback: True)
-    # def callback_data():
-    #     time = call.data
-    #     if time == 'now':
-    #         bot.send_message(call.message.chat.id, f'Курс {currency} к рублю на данный момент: {rate:.2f}')
-    #     elif time == 'date':
-    #         bot.send_message(call.message.chat.id, f'Укажите дату в формате ДД.ММ.ГГ (не ранее 99г.)')
+    #rate = response.json()['rates']['RUB']
+    # bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
+    @bot.callback_query_handler(func=lambda callback: True)
+    def callback_data(call):
+        time = call.data
+        if time == 'now':
+            rate = response.json()['rates']['RUB']
+            bot.send_message(call.message.chat.id, f'Курс {currency} к рублю на данный момент: {rate:.2f}')
+        elif time == 'date':
+            bot.send_message(call.message.chat.id, f'Укажите дату в формате ДД.ММ.ГГ (не ранее 99г.)')
 
 
 # try:
