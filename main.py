@@ -14,7 +14,7 @@ def main(message):
     # markup = types.ReplyKeyboardMarkup()
     # markup.row(types.KeyboardButton('Начать'))
     bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
-    bot.send_message(message.chat.id, 'Я - <b>бот</b>, который подсказывает курс валюты (<b>USD</b>/<b>EUR</b>).',
+    bot.send_message(message.chat.id, 'Я - <b>бот</b>, который подсказывает курс интересующей валюты.',
                      parse_mode='html')
     # bot.register_next_step_handler(message, function)
     markup = types.InlineKeyboardMarkup(row_width=3)
