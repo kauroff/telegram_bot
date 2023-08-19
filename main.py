@@ -37,16 +37,19 @@ def main(message):
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_data(call):
     currency = call.data
-    url = f"https://api.apilayer.com/exchangerates_data/latest?base={currency}"
+    user_date = call.data
+    user_date = datetime.now().strftime('%Y-%m-%d')
+    url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
     response = requests.get(url, headers={"apikey": API_KEY})
     rate = response.json()['rates']['RUB']
+    # timeline = ".".join(data.split("-"))
     # markup = types.InlineKeyboardMarkup(row_width=2)
     # btn1 = types.InlineKeyboardButton('Сейчас', callback_data='now')
     # btn2 = types.InlineKeyboardButton('За конкретную дату', callback_data='date')
-    # markup.row(btn1, btn2)
+     # markup.row(btn1, btn2)
     # bot.send_message(call.message.chat.id, 'Курс на текущий момент или за конкретную дату?', reply_markup=markup)
     #rate = response.json()['rates']['RUB']
-    bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
+    bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {user_date}')
     # @bot.callback_query_handler(func=lambda callback: True)
     # def callback_data(call):
     #     time = call.data
