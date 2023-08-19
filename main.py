@@ -14,7 +14,7 @@ def main(message):
     # markup = types.ReplyKeyboardMarkup()
     # markup.row(types.KeyboardButton('Начать'))
     bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
-    bot.send_message(message.chat.id, 'Я - <b>бот</b>, который подсказывает курс интересующей валюты.',
+    bot.send_message(message.chat.id, 'Я - <b>бот</b>, который подсказывает курс валюты.',
                      parse_mode='html')
     # bot.register_next_step_handler(message, function)
     markup = types.InlineKeyboardMarkup(row_width=3)
@@ -39,21 +39,22 @@ def callback_data(call):
     currency = call.data
     url = f"https://api.apilayer.com/exchangerates_data/latest?base={currency}"
     response = requests.get(url, headers={"apikey": API_KEY})
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    btn1 = types.InlineKeyboardButton('Сейчас', callback_data='now')
-    btn2 = types.InlineKeyboardButton('За конкретную дату', callback_data='date')
-    markup.row(btn1, btn2)
-    bot.send_message(call.message.chat.id, 'Курс на текущий момент или за конкретную дату?', reply_markup=markup)
+    rate = response.json()['rates']['RUB']
+    # markup = types.InlineKeyboardMarkup(row_width=2)
+    # btn1 = types.InlineKeyboardButton('Сейчас', callback_data='now')
+    # btn2 = types.InlineKeyboardButton('За конкретную дату', callback_data='date')
+    # markup.row(btn1, btn2)
+    # bot.send_message(call.message.chat.id, 'Курс на текущий момент или за конкретную дату?', reply_markup=markup)
     #rate = response.json()['rates']['RUB']
-    # bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
-    @bot.callback_query_handler(func=lambda callback: True)
-    def callback_data(call):
-        time = call.data
-        if time == 'now':
-            rate = response.json()['rates']['RUB']
-            bot.send_message(call.message.chat.id, f'Курс {currency} к рублю на данный момент: {rate:.2f}')
-        elif time == 'date':
-            bot.send_message(call.message.chat.id, f'Укажите дату в формате ДД.ММ.ГГ (не ранее 99г.)')
+    bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
+    # @bot.callback_query_handler(func=lambda callback: True)
+    # def callback_data(call):
+    #     time = call.data
+        # if time == 'now':
+        #     rate = response.json()['rates']['RUB']
+        #     bot.send_message(call.message.chat.id, f'Курс {currency} к рублю на данный момент: {rate:.2f}')
+        # elif time == 'date':
+        #     bot.send_message(call.message.chat.id, f'Укажите дату в формате ДД.ММ.ГГ (не ранее 99г.)')
 
 
 # try:
