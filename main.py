@@ -53,7 +53,8 @@ def callback_data(call):
     currency = call.data
     bot.send_message(message.chat.id,
                      'Интересует текущий курс или за конкретную дату?')
-    bot.send_message(message.chat.id, 'Если текущий - напишите "текущий"\nЗа конкретную дату - укажите дату в формате ДД.ММ.ГГГГ')
+    bot.send_message(message.chat.id,
+                     'Если текущий - напишите "текущий"\nЗа конкретную дату - укажите дату в формате ДД.ММ.ГГГГ')
     bot.register_next_step_handler(message, function)
     # def function():
     #     if msg == 'текущий':
