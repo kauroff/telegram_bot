@@ -11,7 +11,7 @@ API_KEY = os.getenv('EXCHANGE_RATE_API_KEY')
 
 def function():
     if message.lower() == 'текущий':
-        url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
+        url = f"ttps://api.apilayer.com/exchangerates_data/latest?base={currency}"
         response = requests.get(url, headers={"apikey": API_KEY})
         rate = response.json()['rates']['RUB']
         bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
