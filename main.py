@@ -21,7 +21,6 @@ def function(message, currency):
         for i in reversed(range(len(date_list))):
             formated_date.append(date_list[i])
         user_date = '-'.join(formated_date)
-        # user_date = (datetime.strptime(date_str, '%Y.%m.%d'))
         url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
         response = requests.get(url, headers={"apikey": API_KEY})
         rate = response.json()['rates']['RUB']
@@ -36,7 +35,6 @@ def main(message):
     bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
     bot.send_message(message.chat.id, 'Я - <b>бот</b>, который подсказывает курс валюты',
                      parse_mode='html')
-    # bot.register_next_step_handler(message, function)
     markup = types.InlineKeyboardMarkup(row_width=3)
     btn1 = types.InlineKeyboardButton('USD \U0001F1FA\U0001F1F8', callback_data='USD')
     btn2 = types.InlineKeyboardButton('EUR \U0001F1EA\U0001F1FA', callback_data='EUR')
