@@ -16,11 +16,17 @@ def function(message, currency):
         rate = response.json()['rates']['RUB']
         bot.send_message(message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
     else:
+        date_list = message.text.split('.')
+        formated_date = []
+        for i in reversed(range(len(date_list))):
+            formated_date.append(date_list[i])
+        user_date = '-'.join(formated_date)
+        # user_date = (datetime.strptime(date_str, '%Y.%m.%d'))
         url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
         response = requests.get(url, headers={"apikey": API_KEY})
         rate = response.json()['rates']['RUB']
         year, month, day = user_date.split('-')
-        bot.send_message(message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {day}.{month}.{year[2:]}')
+        bot.send_message(message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {day}.{month}.{year}')
 
 
 @bot.message_handler(commands=['start'])
@@ -41,11 +47,6 @@ def main(message):
     markup.row(btn1, btn2, btn3)
     markup.row(btn4, btn5, btn6)
     bot.send_message(message.chat.id, 'Интересующая валюта:', reply_markup=markup)
-    # markup = types.InlineKeyboardMarkup(row_width=2)
-    # btn1 = types.InlineKeyboardButton('Сейчас', callback_data='now')
-    # btn2 = types.InlineKeyboardButton('За конкретную дату', callback_data='date')
-    # markup.row(btn1, btn2)
-    # bot.send_message(message.chat.id, 'Курс на текущий момент или за конкретную дату?', reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda callback: True)
@@ -53,42 +54,9 @@ def callback_data(call):
     currency = call.data
     bot.send_message(call.message.chat.id, 'Интересует текущий курс или за конкретную дату?')
     bot.send_message(call.message.chat.id,
-                     'Если <b>текущий</b> - напишите "текущий"\nЗа <b>конкретную дату</b> - укажите дату в формате ДД.ММ.ГГГГ', parse_mode='html')
+                     'Если <b>текущий</b> - напишите "текущий"\nЗа <b>конкретную дату</b> - укажите дату в формате ДД.ММ.ГГГГ',
+                     parse_mode='html')
     bot.register_next_step_handler(call.message, function, currency)
-    # def function():
-    #     if msg == 'текущий':
-    #         url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
-    #         response = requests.get(url, headers={"apikey": API_KEY})
-    #         rate = response.json()['rates']['RUB']
-    #         bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
-    #     else:
-    #         user_date = datetime.now().strftime('%Y-%m-%d')
-    #         url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
-    #         response = requests.get(url, headers={"apikey": API_KEY})
-    #         rate = response.json()['rates']['RUB']
-    #         bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {user_date}')
-    # timeline = ".".join(data.split("-"))
-    # markup = types.InlineKeyboardMarkup(row_width=2)
-    # btn1 = types.InlineKeyboardButton('Сейчас', callback_data='now')
-    # btn2 = types.InlineKeyboardButton('За конкретную дату', callback_data='date')
-    # markup.row(btn1, btn2)
-    # bot.send_message(call.message.chat.id, 'Курс на текущий момент или за конкретную дату?', reply_markup=markup)
-    # rate = response.json()['rates']['RUB']
-    # bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {user_date}')
-    # @bot.callback_query_handler(func=lambda callback: True)
-    # def callback_data(call):
-    #     time = call.data
-    # if time == 'now':
-    #     rate = response.json()['rates']['RUB']
-    #     bot.send_message(call.message.chat.id, f'Курс {currency} к рублю на данный момент: {rate:.2f}')
-    # elif time == 'date':
-    #     bot.send_message(call.message.chat.id, f'Укажите дату в формате ДД.ММ.ГГ (не ранее 99г.)')
-
-
-# try:
-#     time = ...
-# except ValueError:
-#     bot.send_message(message.chat.id, 'Курс на текущий момент или за конкретную дату?', reply_markup=markup)
 
 
 bot.polling(none_stop=True)
