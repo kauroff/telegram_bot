@@ -9,12 +9,26 @@ bot = telebot.TeleBot(os.getenv('TELEGRAM_TOKEN'))
 API_KEY = os.getenv('EXCHANGE_RATE_API_KEY')
 
 
+def function():
+    if message.lower() == 'текущий':
+        url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
+        response = requests.get(url, headers={"apikey": API_KEY})
+        rate = response.json()['rates']['RUB']
+        bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
+    else:
+        user_date = datetime.now().strftime('%Y-%m-%d')
+        url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
+        response = requests.get(url, headers={"apikey": API_KEY})
+        rate = response.json()['rates']['RUB']
+        bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {user_date}')
+
+
 @bot.message_handler(commands=['start'])
 def main(message):
     # markup = types.ReplyKeyboardMarkup()
     # markup.row(types.KeyboardButton('Начать'))
     bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
-    bot.send_message(message.chat.id, 'Я - <b>бот</b>, который подсказывает курс валюты.',
+    bot.send_message(message.chat.id, 'Я - <b>бот</b>, который подсказывает курс валюты',
                      parse_mode='html')
     # bot.register_next_step_handler(message, function)
     markup = types.InlineKeyboardMarkup(row_width=3)
@@ -37,11 +51,22 @@ def main(message):
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_data(call):
     currency = call.data
-    user_date = call.data
-    user_date = datetime.now().strftime('%Y-%m-%d')
-    url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
-    response = requests.get(url, headers={"apikey": API_KEY})
-    rate = response.json()['rates']['RUB']
+    bot.send_message(message.chat.id,
+                     'Интересует текущий курс или за конкретную дату?')
+    bot.send_message(message.chat.id, 'Если текущий - напишите "текущий"\nЗа конкретную дату - укажите дату в формате ДД.ММ.ГГГГ')
+    bot.register_next_step_handler(message, function)
+    # def function():
+    #     if msg == 'текущий':
+    #         url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
+    #         response = requests.get(url, headers={"apikey": API_KEY})
+    #         rate = response.json()['rates']['RUB']
+    #         bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
+    #     else:
+    #         user_date = datetime.now().strftime('%Y-%m-%d')
+    #         url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
+    #         response = requests.get(url, headers={"apikey": API_KEY})
+    #         rate = response.json()['rates']['RUB']
+    #         bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {user_date}')
     # timeline = ".".join(data.split("-"))
     # markup = types.InlineKeyboardMarkup(row_width=2)
     # btn1 = types.InlineKeyboardButton('Сейчас', callback_data='now')
@@ -49,7 +74,7 @@ def callback_data(call):
     # markup.row(btn1, btn2)
     # bot.send_message(call.message.chat.id, 'Курс на текущий момент или за конкретную дату?', reply_markup=markup)
     # rate = response.json()['rates']['RUB']
-    bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {user_date}')
+    # bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {user_date}')
     # @bot.callback_query_handler(func=lambda callback: True)
     # def callback_data(call):
     #     time = call.data
