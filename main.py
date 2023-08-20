@@ -9,18 +9,18 @@ bot = telebot.TeleBot(os.getenv('TELEGRAM_TOKEN'))
 API_KEY = os.getenv('EXCHANGE_RATE_API_KEY')
 
 
-def function():
-    if message.lower() == 'текущий':
-        url = f"ttps://api.apilayer.com/exchangerates_data/latest?base={currency}"
+def function(message, currency):
+    if message.text == 'текущий':
+        url = f"https://api.apilayer.com/exchangerates_data/latest?base={currency}"
         response = requests.get(url, headers={"apikey": API_KEY})
         rate = response.json()['rates']['RUB']
-        bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
+        bot.send_message(message.chat.id, f'Курс {currency} к рублю: {rate:.2f}')
     else:
-        user_date = datetime.now().strftime('%Y-%m-%d')
         url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
         response = requests.get(url, headers={"apikey": API_KEY})
         rate = response.json()['rates']['RUB']
-        bot.send_message(call.message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {user_date}')
+        year, month, day = user_date.split('-')
+        bot.send_message(message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {day}.{month}.{year[2:]}')
 
 
 @bot.message_handler(commands=['start'])
@@ -51,11 +51,10 @@ def main(message):
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_data(call):
     currency = call.data
-    bot.send_message(message.chat.id,
-                     'Интересует текущий курс или за конкретную дату?')
-    bot.send_message(message.chat.id,
-                     'Если текущий - напишите "текущий"\nЗа конкретную дату - укажите дату в формате ДД.ММ.ГГГГ')
-    bot.register_next_step_handler(message, function)
+    bot.send_message(call.message.chat.id, 'Интересует текущий курс или за конкретную дату?')
+    bot.send_message(call.message.chat.id,
+                     'Если <b>текущий</b> - напишите "текущий"\nЗа <b>конкретную дату</b> - укажите дату в формате ДД.ММ.ГГГГ', parse_mode='html')
+    bot.register_next_step_handler(call.message, function, currency)
     # def function():
     #     if msg == 'текущий':
     #         url = f"https://api.apilayer.com/exchangerates_data/{user_date}?&base={currency}"
