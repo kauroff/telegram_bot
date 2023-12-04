@@ -28,7 +28,7 @@ def function(message, currency):
                 year, month, day = user_date.split('-')
                 bot.send_message(message.chat.id, f'Курс {currency} к рублю: {rate:.2f} на момент {day}.{month}.{year}')
         except(KeyError):
-            bot.send_message(message.chat.id, 'Некорректная форма даты. Попробуйте снова')
+            bot.send_message(message.chat.id, 'Некорректная форма даты. Нажмите на интересующую валюту и введите дату еще раз')
 
 
 @bot.message_handler(commands=['start'])
